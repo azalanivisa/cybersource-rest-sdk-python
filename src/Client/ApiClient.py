@@ -14,6 +14,7 @@ import hmac
 import datetime
 from hashlib import sha256
 import calendar
+import Exceptions as exceptions
 
 class CybersourceApiClient:
     config = parser.ConfigParser()
@@ -80,8 +81,33 @@ class CybersourceApiClient:
                                 'x-correlation-id' : self._get_x_correlation_id()})
             response = self.session.get(url, timeout = 10)
             self._logging_helper(url, response, test_info, '')
-        return response
+        return self.handle_response(response, response.content)
 
+    def handle_response(self, response, content):
+        """Validate HTTP response
+        """
+        status = response.status_code
+        if 200 <= status <= 299:
+            return json.loads(content) if content else {}
+        elif status == 400:
+            raise exceptions.BadRequest(response, content)
+        elif status == 401:
+            raise exceptions.UnauthorizedAccess(response, content)
+        elif status == 403:
+            raise exceptions.ForbiddenAccess(response, content)
+        elif status == 404:
+            raise exceptions.ResourceNotFound(response, content)
+        elif status == 405:
+            raise exceptions.MethodNotAllowed(response, content)
+        elif status == 409:
+            raise exceptions.ResourceConflict(response, content)
+        elif 401 <= status <= 499:
+            raise exceptions.ClientError(response, content)
+        elif 500 <= status <= 599:
+            raise exceptions.ServerError(response, content)
+        else:
+            raise exceptions.ConnectionError(
+                response, content, "Unknown response code: #{response.code}")
 
 class XSession(requests.Session):
     """ Requests Session for xpaytoken apis

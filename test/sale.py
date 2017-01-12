@@ -18,15 +18,19 @@ class TestCybersourcePayment(unittest.TestCase):
 
     def setUp(self):
         self.paymentAuthorizationRequest = ''
-        with open('./samples/sales.json','r') as salesPayLoad:
+        with open(sys.argv[1],'r') as salesPayLoad:
             self.paymentAuthorizationRequest = json.loads(salesPayLoad.read())
         self.visaApiClient = SalesApi(self.paymentAuthorizationRequest)
     
     def test_cybersource_payment_authorization(self):
         query_string = 'apikey=' + self.config.get('VDP','apiKey')
-        response = self.visaApiClient.sale()
-        print(response.text)
-        pass
+        try:
+            response = self.visaApiClient.sale()
+            print("transaction successful")
+        except Exception as e:
+            print("transaction failed!!")
+            print(e.args)
+
 
 test = TestCybersourcePayment()
 test.setUp()
