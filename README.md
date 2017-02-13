@@ -7,13 +7,13 @@
 
 ## Usage
 
-1. Register on Visa Developer Platform.
+1. Register on VDP (Visa Developer Platform) (hyperlink to “https://developer.visa.com/”).
 
-2. Create an application on VDP.
+2. Create an application on VDP. Make sure “CyberSource Payment API” is checked before creating the application.
 
 3. Payload has to be in the form of a json file. Mention path of the payload file in configuration.ini.
 
-4. Put API key and Shared Sercet in app.config. For more information on `configuration.ini` refer : [Manual](https://github.com/visa/SampleCode/wiki/Manual) 
+4. Put API key and Shared Sercet in app.config. For more information on configuration.ini refer : Manual . CyberSource Payment API uses X-Pay-Token authentication method in the manual.
 
 5. Run the samples using the following command:
    $ python sampleTransaction.py payloadPath 
